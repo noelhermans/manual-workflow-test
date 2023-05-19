@@ -2,9 +2,21 @@
 on:
   workflow_dispatch:
     inputs:
-      cluster:
-        description: 'clustername'
-        required: true
+      yaml-file:
+        type: string
+        required: false
+        description: "Path to YAML file to parse"
+        default: "test-values.yaml"
+      yq-version:
+        type: string
+        required: false
+        description: "Version of yq to install, if not already"
+        default: "4.27.5"
+      debug:
+        type: boolean
+        required: false
+        description: "Enable debug logging"
+        default: false
 
 jobs:
   build_and_push:

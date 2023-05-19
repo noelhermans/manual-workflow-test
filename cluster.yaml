@@ -1,0 +1,7 @@
+CLUSTER="test-cluster3"
+VERSION="1.26.3-do.0"
+REGION="fra1"
+SIZE="s-4vcpu-8gb"
+COUNT=1
+MIN=1
+MAX=1
