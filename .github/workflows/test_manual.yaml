@@ -1,17 +1,45 @@
-﻿name: Test manual action run
+﻿name: Test manual cluster creation
 on:
   workflow_dispatch:
     inputs:
-      puppy:
-        description: 'A kind of puppy.'
+      cluster:
+        description: 'clustername'
         required: true
 
 jobs:
-  activation:
-    name: Print the input
+  build_and_push:
     runs-on: ubuntu-latest
-    steps:
-      - name: Print puppy type
-        id: printPuppyType
-        run: echo The puppy is ${{ github.event.inputs.puppy }}
+    steps:  
+      - run: |
+          echo "---- Build cluster on DOKS ---"
+      - name: Show branch name
+        run: echo "===============> Version from $GITHUB_REF"
+
+      - name: Checkout the repo
+        uses: actions/checkout@v2
+        
+      - name: Set ENV values from YAML
+        uses: dcarbone/yaml-to-env-action@v1.0.0
+        with:
+          debug: '${{ inputs.debug }}'
+          yaml-file: '${{ inputs.yaml-file }}'
+          yq-version: '${{ inputs.yq-version }}'
+
+      - name: Print environment variables
+        run: |
+          printenv
+          
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_TOKEN }}
+
+      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+        run: doctl registry login --expiry-seconds 600
+
+      - name: login to kubernetes
+        run: doctl kubernetes cluster kubeconfig save test-cluster2
+
+      - name: get nodes
+        run: kubectl get nodes
         
